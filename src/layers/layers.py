@@ -153,8 +153,7 @@ class SelfAttention(layers.Layer):
         Args:
             input_shape (object): shape of input tensor.
         """
-        print("\ninput_shape[0][-1]:", int(input_shape[0][-1]))
-
+        
         self.WQ = self.add_weight(
             name="WQ",
             shape=(int(input_shape[0][-1]), self.output_dim),
@@ -235,9 +234,7 @@ class SelfAttention(layers.Layer):
             V_seq, shape=(-1, K.shape(V_seq)[1], self.multiheads, self.head_dim)
         )
         V_seq = K.permute_dimensions(V_seq, pattern=(0, 2, 1, 3))
-        #print("\nQ_seq:", Q_seq)
-        #print("\nK_seq:", K_seq)
-        #tf.einsum('m b i k, m b j k -> m b i j', Q_seq , K_seq) # shape [10, 20, 50]
+
         A = tf.einsum('m b i k, m b j k -> m b i j', Q_seq , K_seq) / K.sqrt(
             K.cast(self.head_dim, dtype="float32")
         )
@@ -254,7 +251,7 @@ class SelfAttention(layers.Layer):
             mask = (ones - lower_triangular) * 1e12
             A = A - mask
         A = K.softmax(A)
-        #tf.einsum('m b i k, m b k j -> m b i j', A , V_seq)
+
         O_seq = tf.einsum('m b i k, m b k j -> m b i j', A , V_seq)
         O_seq = K.permute_dimensions(O_seq, pattern=(0, 2, 1, 3))
 
