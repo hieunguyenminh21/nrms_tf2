@@ -152,16 +152,16 @@ def create_hparams(flags):
         wordEmb_file=flags.get("wordEmb_file", None),
         wordDict_file=flags.get("wordDict_file", None),
         userDict_file=flags.get("userDict_file", None),
-        vertDict_file=flags.get("vertDict_file", None),
-        subvertDict_file=flags.get("subvertDict_file", None),
+        catDict_file=flags.get("catDict_file", None),
+        subcatDict_file=flags.get("subcatDict_file", None),
         # models
         title_size=flags.get("title_size", None),
         body_size=flags.get("body_size", None),
         word_emb_dim=flags.get("word_emb_dim", None),
         word_size=flags.get("word_size", None),
         user_num=flags.get("user_num", None),
-        vert_num=flags.get("vert_num", None),
-        subvert_num=flags.get("subvert_num", None),
+        cat_num=flags.get("cat_num", None),
+        subcat_num=flags.get("subcat_num", None),
         his_size=flags.get("his_size", None),
         npratio=flags.get("npratio"),
         dropout=flags.get("dropout", 0.0),
@@ -179,6 +179,23 @@ def create_hparams(flags):
         show_step=flags.get("show_step", 1),
         metrics=flags.get("metrics", None),
     )
+
+def prepare_hparams(yaml_file=None, **kwargs):
+    """Prepare hyperparams and make sure it's ok
+    Args:
+        yaml_file: path to yaml file
+    Returns:
+        TF Hyperparams object (tf.contrib.training.HParams)
+    """
+    if yaml_file is not None:
+        config = load_yaml(yaml_file)
+        config = flat_config(config)
+    else:
+        config = {}
+    
+    config.update(kwargs)
+    check_nn_config(config)
+    return create_hparams(config)
 
 
 def prepare_hparams(yaml_file=None, **kwargs):

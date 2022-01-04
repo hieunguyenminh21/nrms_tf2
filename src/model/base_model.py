@@ -52,19 +52,7 @@ class BaseModel:
         self.hparams = hparams
         self.support_quick_scoring = hparams.support_quick_scoring
 
-        # set GPU use with on demand growth
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        sess = tf.compat.v1.Session(
-            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
-        )
-
-        # set this TensorFlow session as the default session for Keras
-        tf.compat.v1.keras.backend.set_session(sess)
-
-        # IMPORTANT: models have to be loaded AFTER SETTING THE SESSION for keras!
-        # Otherwise, their weights will be unavailable in the threads after the session there has been set
         self.model, self.scorer = self._build_graph()
-
         self.loss = self._get_loss()
         self.train_optimizer = self._get_opt()
 
